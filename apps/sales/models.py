@@ -41,3 +41,52 @@ class AchatIngredient(models.Model):
         max_digits=12,
         decimal_places=2
     )
+
+class Vente(models.Model):
+    idVente = models.AutoField(primary_key=True)
+
+    date = models.DateTimeField(auto_now_add=True)
+
+    client = models.CharField(max_length=100, null=True, blank=True)
+
+    total = models.DecimalField(
+        max_digits=12,
+        decimal_places=2
+    )
+
+    montant_recu = models.DecimalField(
+        max_digits=12,
+        decimal_places=2
+    )
+
+    reste = models.DecimalField(
+        max_digits=12,
+        decimal_places=2,
+        default=0
+    )
+
+class VentePlat(models.Model):
+    idVentePlat = models.AutoField(primary_key=True)
+
+    vente = models.ForeignKey(
+        "Vente",
+        on_delete=models.CASCADE,
+        related_name="items"
+    )
+
+    plat = models.ForeignKey(
+        "menu.Plat",
+        on_delete=models.PROTECT
+    )
+
+    qtePlat = models.PositiveIntegerField()
+
+    prix_unitaire = models.DecimalField(
+        max_digits=10,
+        decimal_places=2
+    )
+
+    total = models.DecimalField(
+        max_digits=12,
+        decimal_places=2
+    )

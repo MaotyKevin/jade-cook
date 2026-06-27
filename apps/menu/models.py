@@ -27,7 +27,7 @@ class Plat(models.Model):
 class PlatIngredient(models.Model):
     id = models.AutoField(primary_key=True)
 
-    plat = models.ForeignKey("Plat", on_delete=models.CASCADE)
+    plat = models.ForeignKey("Plat", on_delete=models.CASCADE,related_name="recettes")
     ingredient = models.ForeignKey("Ingredient", on_delete=models.PROTECT)
 
     quantity = models.DecimalField(max_digits=10, decimal_places=3)
