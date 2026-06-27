@@ -8,6 +8,45 @@ from menu.models import Plat
 
 
 @transaction.atomic
+def process_achat(achat):
+    total_achat = Decimal("0")
+
+    for item in achat.items.all():
+        ingredient = item.ingredient
+
+        qty = Decimal(item.qteAcheté)
+        price = Decimal(item.prixUnitaire)
+
+        line_total = qty * price
+        item.total = line_total
+        item.save()
+
+        total_achat += line_total
+
+        # stock update
+        before = ingredient.stock
+        after = before + qty
+
+        ingredient.stock = after
+        ingredient.prixUnit = price  # optional update (last price)
+        ingredient.save()
+
+        # stock movement
+        StockMovement.objects.create(
+            ingredient=ingredient,
+            movement_type="PURCHASE",
+            quantity=qty,
+            stock_before=before,
+            stock_after=after,
+            reference_id=achat.idAchat,
+            reference_model="Achat"
+        )
+
+    achat.total = total_achat
+    achat.save()
+
+
+@transaction.atomic
 def deduct_stock_for_sale(plat: Plat, quantity: int, vente_id=None):
     """
     Deduct ingredients based on recipe when a dish is sold.

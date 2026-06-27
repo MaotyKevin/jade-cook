@@ -1,0 +1,7 @@
+Vente created
+   ↓
+process_vente()
+   ↓
+deduct_stock_for_sale()
+   ↓
+create StockMovement (SALE)

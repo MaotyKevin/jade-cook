@@ -1,0 +1,9 @@
+Achat created
+   ↓
+process_achat()
+   ↓
+update Ingredient.stock (+)
+   ↓
+create StockMovement (PURCHASE)
+   ↓
+update totals
