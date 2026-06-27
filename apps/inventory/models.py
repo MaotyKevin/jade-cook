@@ -29,7 +29,7 @@ class Ingredient(models.Model):
     idIngredient = models.AutoField(primary_key=True)
     nom = models.CharField(max_length=100, unique=True)
 
-    prixUnit = models.DecimalField(max_digits=10, decimal_places=2)
+    prixUnit = models.DecimalField(max_digits=10, decimal_places=2,default=0)
 
     stock = models.DecimalField(max_digits=10, decimal_places=3, default=0)
 
@@ -50,3 +50,45 @@ class Ingredient(models.Model):
 
     def __str__(self):
         return f"{self.nom} ({self.stock} {self.idUnite.abbreviation})"
+
+class StockMovement(models.Model):
+
+    class MovementType(models.TextChoices):
+        PURCHASE = "PURCHASE", "Purchase"
+        SALE = "SALE", "Sale"
+        LOSS = "LOSS", "Loss"
+        ADJUSTMENT = "ADJUSTMENT", "Adjustment"
+        PRODUCTION = "PRODUCTION", "Production"
+
+    idMovement = models.AutoField(primary_key=True)
+
+    ingredient = models.ForeignKey(
+        "Ingredient",
+        on_delete=models.PROTECT,
+        related_name="movements"
+    )
+
+    movement_type = models.CharField(
+        max_length=20,
+        choices=MovementType.choices
+    )
+
+    quantity = models.DecimalField(
+        max_digits=10,
+        decimal_places=3
+    )
+
+    stock_before = models.DecimalField(
+        max_digits=10,
+        decimal_places=3
+    )
+
+    stock_after = models.DecimalField(
+        max_digits=10,
+        decimal_places=3
+    )
+
+    reference_id = models.IntegerField(null=True, blank=True)
+    reference_model = models.CharField(max_length=50, null=True, blank=True)
+
+    created_at = models.DateTimeField(auto_now_add=True)
